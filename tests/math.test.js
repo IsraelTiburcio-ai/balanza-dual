@@ -1,0 +1,8 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {bank,validateBank} from '../bank.js';
+import {evaluate,inspect,conclude,transpose,selectGame} from '../math.js';
+test('15 escenarios: objetivos, factibilidad y dual transpuesto',()=>{assert.equal(validateBank(),15);for(const s of bank){assert.deepEqual(s.dual.A,transpose(s.primal.A));assert.deepEqual(s.dual.c,s.primal.b);assert.deepEqual(s.dual.b,s.primal.c);const {p,d}=inspect(s);if(p.feasible&&d.feasible)assert.ok(p.value<=d.value);if(s.type==='error')assert.ok(p.value>d.value&&(!p.feasible||!d.feasible));if(s.type==='optimal'){const x=[...s.x];x[s.adjustIndex]=s.target;assert.equal(conclude(evaluate(s.primal,x),d),'optimal');}if(s.type==='bound')assert.equal(s.candidates.filter(y=>evaluate(s.dual,y).feasible).length,1);}});
+test('igualdad sin factibilidad no certifica; negativos se rechazan',()=>{const s=bank[0];assert.equal(conclude({value:9,feasible:false},{value:9,feasible:true}),'infeasible');assert.equal(evaluate(s.primal,[-1,0]).feasible,false);assert.equal(evaluate(s.dual,[0,0]).feasible,false);});
+test('cinco partidas de cinco tipos sin duplicados',()=>{for(let i=0;i<5;i++){const r=selectGame(bank,()=>i/5);assert.equal(r.length,5);assert.equal(new Set(r.map(s=>s.id)).size,5);assert.equal(new Set(r.map(s=>s.type)).size,5);}});
+test('malla independiente de vectores: dualidad débil',()=>{for(const s of bank){for(let a=0;a<=6;a++)for(let b=0;b<=6;b++)for(let c=0;c<=4;c++)for(let d=0;d<=4;d++){const p=evaluate(s.primal,[a,b]),q=evaluate(s.dual,[c,d]);if(p.feasible&&q.feasible)assert.ok(p.value<=q.value);}}});

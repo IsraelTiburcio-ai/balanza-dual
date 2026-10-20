@@ -1,0 +1,1 @@
+{"name":"balanza-dual","private":true,"type":"module","scripts":{"test":"node --test tests/math.test.js","serve":"python3 -m http.server 4173"},"devDependencies":{"@playwright/test":"^1.58.0","@axe-core/playwright":"^4.11.0"}}
