@@ -27,7 +27,7 @@ jobs:
       - name: Preparar sitio estático
         run: |
           mkdir _site
-          cp index.html style.css app.js bank.js math.js _site/
+          cp index.html style.css app.js bank.js math.js optilab-results.js _site/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
